@@ -54,11 +54,11 @@ namespace SportsLeague.Domain.Services
             // Obtener resultados de esos partidos
             var matchIds = matches.Select(m => m.Id).ToHashSet(); // El HashSet mejora la búsqueda posterior
             var allResults = new List<MatchResult>();
-            
+
             foreach (var matchId in matchIds)
             {
                 var result = await _matchResultRepository.GetByMatchIdAsync(matchId);
-                
+
                 if (result != null)
                 {
                     allResults.Add(result);
@@ -183,11 +183,11 @@ namespace SportsLeague.Domain.Services
                 .GroupBy(g => new { g.PlayerId, g.Player.FirstName, g.Player.LastName, g.Player.TeamId })
                 .Select(group => new
                 {
-                    PlayerId = group.Key.PlayerId,
+                    group.Key.PlayerId,
                     PlayerName = group.Key.FirstName + " " + group.Key.LastName,
                     TeamName = group.First().Player.Team?.Name ?? "N/A",
                     Goals = group.Count(),
-                    Penalties = group.Count(g => g.Type == Enums.GoalType.Penalty),
+                    Penalties = group.Count(g => g.Type == GoalType.Penalty),
                     MatchesWithGoals = group
                     .Select(g => g.MatchId)
                     .Distinct()
@@ -224,11 +224,11 @@ namespace SportsLeague.Domain.Services
                 .GroupBy(c => new { c.PlayerId, c.Player.FirstName, c.Player.LastName })
                 .Select(group => new
                 {
-                    PlayerId = group.Key.PlayerId,
+                    group.Key.PlayerId,
                     PlayerName = group.Key.FirstName + " " + group.Key.LastName,
                     TeamName = group.First().Player.Team?.Name ?? "N/A",
-                    YellowCards = group.Count(c => c.Type == Enums.CardType.Yellow),
-                    RedCards = group.Count(c => c.Type == Enums.CardType.Red),
+                    YellowCards = group.Count(c => c.Type == CardType.Yellow),
+                    RedCards = group.Count(c => c.Type == CardType.Red),
                     TotalCards = group.Count()
                 })
                 .OrderByDescending(s => s.RedCards)
